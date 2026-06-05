@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4">
+        <div class="card p-3 shadow-sm bg-white border-start border-primary border-4">
+            <small class="text-muted text-uppercase font-weight-bold">Total Enrolled</small>
+            <h3 class="fw-bold mb-0 mt-1">{{ stats.total }}</h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <div class="card p-3 shadow-sm bg-white border-start border-success border-4">
+            <small class="text-muted text-uppercase font-weight-bold">Class Average</small>
+            <h3 class="fw-bold mb-0 mt-1">{{ stats.avg_marks }}%</h3>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card p-3 shadow-sm bg-white border-start border-warning border-4">
+            <small class="text-muted text-uppercase font-weight-bold">Top Score Milestone</small>
+            <h3 class="fw-bold mb-0 mt-1">{{ stats.top_score }}/100</h3>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 align-items-center mb-4">
+    <div class="col-12 col-md-8">
+        <form action="/" method="GET" class="d-flex gap-2">
+            <input type="text" name="search" value="{{ search_query }}" class="form-control bg-white shadow-sm border-0 px-3" placeholder="Search by name or department..." autocomplete="off">
+            {% if search_query %}
+                <a href="/" class="btn btn-light shadow-sm">Clear</a>
+            {% endif %}
+            <button type="submit" class="btn btn-dark shadow-sm px-4">Search</button>
+        </form>
+    </div>
+    <div class="col-12 col-md-4 text-md-end">
+        <a href="/add" class="btn btn-primary shadow-sm w-100 w-md-auto px-4 fw-medium">+ Enroll Student</a>
+    </div>
+</div>
+
+<div class="card shadow-sm overflow-hidden mb-5">
+    <div class="table-responsive">
+        <table class="table table-align-middle table-hover mb-0">
+            <thead class="table-light text-secondary">
+                <tr>
+                    <th class="ps-4 py-3">ID</th>
+                    <th class="py-3">Student Name</th>
+                    <th class="py-3">Department</th>
+                    <th class="py-3">Marks</th>
+                    <th class="py-3">Attendance</th>
+                    <th class="text-center py-3pe-4">Action</th>
+                </tr>
+            </thead>
+            <tbody class="border-top-0">
+                {% if students %}
+                    {% for student in students %}
+                    <tr>
+                        <td class="ps-4 text-muted font-monospace small">#{{ student.0 }}</td>
+                        <td><span class="fw-semibold text-dark">{{ student.1 }}</span></td>
+                        <td>
+                            {% if student.2 == 'IT' %}
+                                <span class="badge badge-dept bg-info-subtle text-info border border-info-subtle rounded-pill">IT</span>
+                            {% elif student.2 == 'BCA' %}
+                                <span class="badge badge-dept bg-primary-subtle text-primary border border-primary-subtle rounded-pill">BCA</span>
+                            {% else %}
+                                <span class="badge badge-dept bg-warning-subtle text-warning border border-warning-subtle rounded-pill">CSIT</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="fw-medium">{{ student.3 }}</span> <span class="text-muted small">/100</span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-medium">{{ student.4 }}%</span>
+                                <div class="progress w-50 d-none d-sm-flex" style="height: 6px;">
+                                    <div class="progress-bar {% if student.4 >= 85 %}bg-success{% elif student.4 >= 75 %}bg-primary{% else %}bg-danger{% endif %}" role="progressbar" style="width: {{ student.4 }}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center pe-4">
+                            <a href="/delete/{{ student.0 }}" class="btn btn-link btn-sm text-danger fw-medium link-underline-opacity-0 link-underline-opacity-100-hover" onclick="return confirm('Permanently drop this student track?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-5">
+                            <span class="fs-4 d-block mb-2"></span> No matching tracking profiles found.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

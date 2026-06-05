@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center my-4">
+    <div class="col-12 col-md-6">
+        <div class="card shadow-sm p-4 bg-white">
+            <h4 class="fw-bold text-dark mb-1">Enroll New Student</h4>
+            <p class="text-muted small mb-4">Input academic records into the database engine.</p>
+            
+            <form action="/add" method="POST">
+                <div class="mb-3">
+                    <label class="form-label small fw-medium text-secondary">Full Name</label>
+                    <input type="text" name="name" class="form-control px-3 border-light-subtle" required autocomplete="off" placeholder="e.g. Manish Kafle">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label small fw-medium text-secondary">Department Track</label>
+                    <select name="department" class="form-select border-light-subtle" required>
+                        <option value="" disabled selected>Choose field...</option>
+                        <option value="IT">IT</option>
+                        <option value="BCA">BCA</option>
+                        <option value="CSIT">CSIT</option>
+                    </select>
+                </div>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <label class="form-label small fw-medium text-secondary">Marks obtained</label>
+                        <input type="number" name="marks" min="0" max="100" class="form-control border-light-subtle" required placeholder="0-100">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-medium text-secondary">Attendance Rate (%)</label>
+                        <input type="number" name="attendance" min="0" max="100" class="form-control border-light-subtle" required placeholder="0-100">
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                    <a href="/" class="text-secondary small fw-medium link-underline-opacity-0">Back to Dashboard</a>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">Save to Matrix</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
