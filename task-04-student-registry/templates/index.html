@@ -5,19 +5,19 @@
     <div class="col-6 col-md-4">
         <div class="card p-3 shadow-sm bg-white border-start border-primary border-4">
             <small class="text-muted text-uppercase font-weight-bold">Total Enrolled</small>
-            <h3 class="fw-bold mb-0 mt-1">{{ stats.total }}</h3>
+            <h3 class="fw-bold mb-0 mt-1">{{ stats.total if stats.total is not none else 0 }}</h3>
         </div>
     </div>
     <div class="col-6 col-md-4">
         <div class="card p-3 shadow-sm bg-white border-start border-success border-4">
             <small class="text-muted text-uppercase font-weight-bold">Class Average</small>
-            <h3 class="fw-bold mb-0 mt-1">{{ stats.avg_marks }}%</h3>
+            <h3 class="fw-bold mb-0 mt-1">{{ stats.avg_marks if stats.avg_marks is not none else 0 }}%</h3>
         </div>
     </div>
     <div class="col-12 col-md-4">
         <div class="card p-3 shadow-sm bg-white border-start border-warning border-4">
             <small class="text-muted text-uppercase font-weight-bold">Top Score Milestone</small>
-            <h3 class="fw-bold mb-0 mt-1">{{ stats.top_score }}/100</h3>
+            <h3 class="fw-bold mb-0 mt-1">{{ stats.top_score if stats.top_score is not none else 0 }}/100</h3>
         </div>
     </div>
 </div>
@@ -25,7 +25,7 @@
 <div class="row g-3 align-items-center mb-4">
     <div class="col-12 col-md-8">
         <form action="/" method="GET" class="d-flex gap-2">
-            <input type="text" name="search" value="{{ search_query }}" class="form-control bg-white shadow-sm border-0 px-3" placeholder="Search by name or department..." autocomplete="off">
+            <input type="text" name="search" value="{{ search_query or '' }}" class="form-control bg-white shadow-sm border-0 px-3" placeholder="Search by name or department..." autocomplete="off">
             {% if search_query %}
                 <a href="/" class="btn btn-light shadow-sm">Clear</a>
             {% endif %}
@@ -47,42 +47,42 @@
                     <th class="py-3">Department</th>
                     <th class="py-3">Marks</th>
                     <th class="py-3">Attendance</th>
-                    <th class="text-center py-3pe-4">Action</th>
+                    <th class="text-center py-3 pe-4">Action</th>
                 </tr>
             </thead>
             <tbody class="border-top-0">
                 {% if students %}
                     {% for student in students %}
                     <tr>
-                        <td class="ps-4 text-muted font-monospace small">#{{ student.0 }}</td>
-                        <td><span class="fw-semibold text-dark">{{ student.1 }}</span></td>
+                        <td class="ps-4 text-muted font-monospace small">#{{ student.id }}</td>
+                        <td><span class="fw-semibold text-dark">{{ student.name }}</span></td>
                         <td>
-                            {% if student.2 == 'IT' %}
-                                <span class="badge badge-dept bg-info-subtle text-info border border-info-subtle rounded-pill">IT</span>
-                            {% elif student.2 == 'BCA' %}
-                                <span class="badge badge-dept bg-primary-subtle text-primary border border-primary-subtle rounded-pill">BCA</span>
+                            {% if student.department == 'IT' %}
+                                <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill">IT</span>
+                            {% elif student.department == 'BCA' %}
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill">BCA</span>
                             {% else %}
-                                <span class="badge badge-dept bg-warning-subtle text-warning border border-warning-subtle rounded-pill">CSIT</span>
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">CSIT</span>
                             {% endif %}
                         </td>
-                        <td><span class="fw-medium">{{ student.3 }}</span> <span class="text-muted small">/100</span></td>
+                        <td><span class="fw-medium">{{ student.marks }}</span> <span class="text-muted small">/100</span></td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="fw-medium">{{ student.4 }}%</span>
+                                <span class="fw-medium">{{ student.attendance }}%</span>
                                 <div class="progress w-50 d-none d-sm-flex" style="height: 6px;">
-                                    <div class="progress-bar {% if student.4 >= 85 %}bg-success{% elif student.4 >= 75 %}bg-primary{% else %}bg-danger{% endif %}" role="progressbar" style="width: {{ student.4 }}%"></div>
+                                    <div class="progress-bar {% if student.attendance >= 85 %}bg-success{% elif student.attendance >= 75 %}bg-primary{% else %}bg-danger{% endif %}" role="progressbar" style="width: {{ student.attendance }}%"></div>
                                 </div>
                             </div>
                         </td>
                         <td class="text-center pe-4">
-                            <a href="/delete/{{ student.0 }}" class="btn btn-link btn-sm text-danger fw-medium link-underline-opacity-0 link-underline-opacity-100-hover" onclick="return confirm('Permanently drop this student track?')">Delete</a>
+                            <a href="/delete/{{ student.id }}" class="btn btn-link btn-sm text-danger fw-medium link-underline-opacity-0 link-underline-opacity-100-hover" onclick="return confirm('Permanently drop this student track?')">Delete</a>
                         </td>
                     </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
                         <td colspan="6" class="text-center text-muted py-5">
-                            <span class="fs-4 d-block mb-2"></span> No matching tracking profiles found.
+                            <span class="fs-4 d-block mb-2">🔍</span> No matching tracking profiles found.
                         </td>
                     </tr>
                 {% endif %}

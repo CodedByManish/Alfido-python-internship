@@ -1,4 +1,5 @@
 import os
+import MySQLdb.cursors  
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from dotenv import load_dotenv
@@ -18,9 +19,9 @@ mysql = MySQL(app)
 @app.route('/')
 def index():
     search_query = request.args.get('search', '').strip()
-    cur = mysql.connection.cursor()
     
-    # 1. Fetch filtered or total student records
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    
     if search_query:
         query = "SELECT * FROM students WHERE name LIKE %s OR department LIKE %s ORDER BY id DESC"
         cur.execute(query, (f"%{search_query}%", f"%{search_query}%"))
@@ -28,9 +29,9 @@ def index():
         cur.execute("SELECT * FROM students ORDER BY id DESC")
     students = cur.fetchall()
     
-    # 2. Compute live dashboard metrics using SQL aggregations
-    cur.execute("SELECT COUNT(*), AVG(marks), MAX(marks) FROM students")
-    stats_raw = cur.fetchone()
+    stats_cur = mysql.connection.cursor()
+    stats_cur.execute("SELECT COUNT(*), AVG(marks), MAX(marks) FROM students")
+    stats_raw = stats_cur.fetchone()
     
     stats = {
         "total": stats_raw[0] if stats_raw[0] else 0,
@@ -38,6 +39,7 @@ def index():
         "top_score": stats_raw[2] if stats_raw[2] else 0
     }
     
+    stats_cur.close()
     cur.close()
     return render_template('index.html', students=students, stats=stats, search_query=search_query)
 
